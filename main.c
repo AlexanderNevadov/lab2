@@ -99,6 +99,7 @@ int backtracking(Puzzle *p, int index, int used[10]) {
     int ch = p->letters[index] - 'A';
     for (int d = 0; d <= 9; d++) {
         if (used[d]) continue;
+        if (d == 0 && p->leading[ch]) continue;
 
         p->digit[ch] = d;
         used[d] = 1;
