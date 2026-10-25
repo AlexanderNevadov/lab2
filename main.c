@@ -87,7 +87,7 @@ void print_solution(const Puzzle *p) {
     putchar('\n');
 }
 
-int brute_force(Puzzle *p, int index) {
+int backtracking(Puzzle *p, int index, int used[10]) {
     if (index == p->letter_count) {
         if (is_solution(p)) {
             print_solution(p);
@@ -95,12 +95,19 @@ int brute_force(Puzzle *p, int index) {
         }
         return 0;
     }
+
     int ch = p->letters[index] - 'A';
     for (int d = 0; d <= 9; d++) {
+        if (used[d]) continue;
+
         p->digit[ch] = d;
-        if (brute_force(p, index + 1)) return 1;
+        used[d] = 1;
+
+        if (backtracking(p, index + 1, used)) return 1;
+
+        used[d] = 0;
+        p->digit[ch] = -1;
     }
-    p->digit[ch] = -1;
     return 0;
 }
 
@@ -113,6 +120,7 @@ int main(void) {
         puts("Invalid puzzle (use 2 to 7 addends, uppercase letters, + and =).");
         return 1;
     }
-    if (!brute_force(&puzzle, 0)) puts("No solution found.");
+    int used[10] = {0};
+    if (!backtracking(&puzzle, 0, used)) puts("No solution found.");
     return 0;
 }
